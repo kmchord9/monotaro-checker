@@ -21,26 +21,38 @@ function validateMonotaro() {
         }
     }
     
-    // --- ページB: ご注文内容確認画面 ---
+// --- ページB: ご注文内容確認画面 ---
     else if (url.includes("monotaro.checkout.confirm.show_init_edit_servlet.ShowInitEditServlet")) {
-        // 1. キャンペーンコード・クーポン入力欄の非表示
+        
+        // (1) キャンペーンコード・クーポン入力欄の非表示
         const codePart = document.querySelector('tr[data-analytics-tag="code_part"]');
-        if (codePart) codePart.style.display = "none";
+        if (codePart) {
+            codePart.style.display = "none";
+        }
 
-        // 2. 支払い方法の制御（銀行振込(都度払い) [value="1"] 以外を削除・固定）
+        // (2) 支払い方法の厳密なチェック（「都度払い」以外を排除）
         const payMethods = document.querySelectorAll('.pay_method');
+        let hasCorrectBankTransfer = false; 
+        let correctInput = null;
+
         payMethods.forEach(input => {
-            if (input.value !== "1") {
-                // 銀行振込(1)以外は、親のli要素ごと非表示にする
+            // 親要素（labelやli）からテキストを取得して「都度払い」が含まれるか確認
+            const labelText = input.closest('label')?.textContent || "";
+            
+            if (input.value === "1" && labelText.includes("都度払い")) {
+                hasCorrectBankTransfer = true;
+                correctInput = input;
+            } else {
+                // 「都度払い」ではない選択肢（月締め、代引き、カード等）はすべて非表示
                 const parentLi = input.closest('li');
                 if (parentLi) parentLi.style.display = "none";
-            } else {
-                // 銀行振込(1)が選択されていない場合は強制的にチェックを入れる
-                if (!input.checked) {
-                    input.click(); // clickイベントを発火させて確実に選択
-                }
             }
         });
+
+        // 銀行振込(都度払い)が正しく存在すれば、強制的にチェックを入れる
+        if (hasCorrectBankTransfer && !correctInput.checked) {
+            correctInput.click();
+        }
 
         // 【デバッグ用】配送料を強制的に￥100に書き換える
         /*
@@ -48,11 +60,10 @@ function validateMonotaro() {
         if (debugFreight) {
             debugFreight.innerHTML = "<em>￥100</em>";
             console.log("Debug: 配送料を￥100に書き換えました。判定ロジックを確認してください。");
-        }
-        */
-        
+        }  
+        */      
 
-        // 3. 金額と配送料のチェック
+        // (3) バリデーション（金額・配送料・設定ミス）
         const subTotalElement = document.getElementById("checkoutNext__rg_sub_total_span");
         const freightElement = document.getElementById("checkoutNext__rg_d_charge");
         const orderButtons = [
@@ -67,28 +78,32 @@ function validateMonotaro() {
             orderButtons.forEach(btn => {
                 if (!btn) return;
 
-                // 警告表示をリセット（重複防止）
+                // 以前の警告表示をクリア
                 const existingWarn = document.getElementById("ext-warning-" + btn.id);
                 if (existingWarn) existingWarn.remove();
 
-                // ケースA: 3500円未満の場合【ボタン抑制あり】
+                // --- 判定1: 支払い設定ミス（都度払いになっていない） ---
+                if (!hasCorrectBankTransfer) {
+                    applyRestriction(btn, "【重要】お支払方法に「都度払い」が追加されていません。マニュアルを確認して設定してください");
+                    return; 
+                }
+
+                // --- 判定2: 金額不足（3,500円未満はボタン抑制） ---
                 if (subTotal < THRESHOLD_PRICE) {
                     applyRestriction(btn, `小計が￥${THRESHOLD_PRICE}未満のため確定できません`);
                 } 
-                // ケースB: 3500円以上だが、配送料が発生している場合【ボタン抑制なし・注記のみ】
+                // --- 判定3: 配送料発生（注記のみ表示・ボタンは有効） ---
                 else if (freight > 0) {
-                    // ボタンは有効化（制限を解除）
                     btn.style.opacity = "1.0";
                     btn.style.pointerEvents = "auto";
                     
-                    // 注記メッセージの挿入
                     const note = document.createElement("div");
                     note.id = "ext-warning-" + btn.id;
                     note.innerText = "※配送料が発生しているので事務担当者に連絡した上で注文してください";
                     note.style = "color: #d93025; font-size: 14px; font-weight: bold; margin-top: 8px; padding: 8px; border: 2px solid #d93025; background: #fff5f5; display: inline-block;";
                     btn.parentNode.insertBefore(note, btn.nextSibling);
                 }
-                // ケースC: 問題なし
+                // --- 全て正常 ---
                 else {
                     btn.style.opacity = "1.0";
                     btn.style.pointerEvents = "auto";
