@@ -1,0 +1,11 @@
+{
+  "manifest_version": 3,
+  "name": "モノタロウ事務誤り防止ツール",
+  "version": "1.0",
+  "content_scripts": [
+    {
+      "matches": ["https://www.monotaro.com/*"],
+      "js": ["content_script.js"]
+    }
+  ]
+}
