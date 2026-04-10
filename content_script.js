@@ -96,10 +96,10 @@ function processPageA() {
     clearWarnings([registerBtn, estimateBtn]);
 
     if (subtotal < THRESHOLD_PRICE) {
-        applyRestriction(registerBtn, `小計が￥${THRESHOLD_PRICE}未満のため進めません`);
+        applyRestriction(registerBtn, `小計が￥${THRESHOLD_PRICE}未満のため購入できません`);
         applyRestriction(estimateBtn, `￥${THRESHOLD_PRICE}未満は見積不可`);
     } else if (!checkTaxDecimal(subtotal)) {
-        applyRestriction(registerBtn, "税計算不一致リスクのため商品構成を調整してください");
+        applyRestriction(registerBtn, "税計算不一致リスクのため購入できません");
         applyRestriction(estimateBtn, "税計算不一致リスクのため見積できません");
     }
 }
@@ -169,7 +169,7 @@ function processPageC() {
 
             const printBtn = document.createElement("button");
             printBtn.id = "custom-print-btn";
-            printBtn.innerText = "PDFを印刷する";
+            printBtn.innerText = "印刷する";
             printBtn.style = "display:block; margin:10px auto 20px auto; padding:12px 30px; background:#0078d4; color:white; border:none; border-radius:4px; cursor:pointer; font-weight:bold; font-size:18px;";
             printBtn.onclick = () => window.print();
             const mainTable = document.querySelector("div[align='center'] > table");
