@@ -143,7 +143,7 @@ function processPageA() {
 
     const btns = [registerBtn, estimateBtn].filter(Boolean);
 
-    // 【ブラックリスト方式】まずは一旦無効化
+    // 【ホワイトリスト方式】まずは一旦無効化
     btns.forEach(btn => applyRestriction(btn, "システム判定中..."));
 
     const priceElement = document.querySelector(".NextStepPriceValue .Price");
@@ -172,7 +172,7 @@ function processPageB() {
         return;
     }
 
-    // 【ブラックリスト方式】まずは一旦無効化
+    // 【ホワイトリスト方式】まずは一旦無効化
     btns.forEach(btn => applyRestriction(btn, "システム判定中..."));
 
     const codePart = document.querySelector('tr[data-analytics-tag="code_part"]');
