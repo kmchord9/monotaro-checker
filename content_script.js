@@ -213,29 +213,28 @@ function processPageB() {
     const subtotal = parsePrice(subTotalEl.textContent);
     const freight = parsePrice(freightEl.textContent);
 
-        if (!hasBankTransfer) {
-            btns.forEach(btn => applyRestriction(btn, "【重要】お支払方法を「都度払い」に設定してください。"));
-        } else if (subtotal < THRESHOLD_PRICE) {
-            btns.forEach(btn => applyRestriction(btn, `小計が￥${THRESHOLD_PRICE}未満のため確定できません`));
-        } else if (!checkTaxDecimal(subtotal)) {
-            btns.forEach(btn => applyRestriction(btn, "税計算不一致リスクのため確定できません"));
-        } else {
-            clearWarnings(btns);
+    if (!hasBankTransfer) {
+        btns.forEach(btn => applyRestriction(btn, "【重要】お支払方法を「都度払い」に設定してください。"));
+    } else if (subtotal < THRESHOLD_PRICE) {
+        btns.forEach(btn => applyRestriction(btn, `小計が￥${THRESHOLD_PRICE}未満のため確定できません`));
+    } else if (!checkTaxDecimal(subtotal)) {
+        btns.forEach(btn => applyRestriction(btn, "税計算不一致リスクのため確定できません"));
+    } else {
+        clearWarnings(btns);
 
-            // 配送料の警告はボタン自体は押せるが注意を促す
-            if (freight > 0) {
-                btns.forEach(btn => {
-                    const identifier = btn.id || btn.className.split(' ').join('-');
-                    const noteId = "ext-note-" + identifier;
-                    if (!document.getElementById(noteId)) {
-                        const note = document.createElement("div");
-                        note.id = noteId;
-                        note.innerText = "※配送料が発生しているので事務担当者に連絡した上で注文してください";
-                        note.style = "color:#d93025; font-size:14px; font-weight:bold; margin-top:8px; padding:8px; border:2px solid #d93025; background:#fff5f5; display:inline-block;";
-                        btn.parentNode.insertBefore(note, btn.nextSibling);
-                    }
-                });
-            }
+        // 配送料の警告はボタン自体は押せるが注意を促す
+        if (freight > 0) {
+            btns.forEach(btn => {
+                const identifier = btn.id || btn.className.split(' ').join('-');
+                const noteId = "ext-note-" + identifier;
+                if (!document.getElementById(noteId)) {
+                    const note = document.createElement("div");
+                    note.id = noteId;
+                    note.innerText = "※配送料が発生しているので事務担当者に連絡した上で注文してください";
+                    note.style = "color:#d93025; font-size:14px; font-weight:bold; margin-top:8px; padding:8px; border:2px solid #d93025; background:#fff5f5; display:inline-block;";
+                    btn.parentNode.insertBefore(note, btn.nextSibling);
+                }
+            });
         }
     }
 }
