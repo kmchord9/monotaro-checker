@@ -130,13 +130,19 @@ function triggerPanicMode(message, title = "【システムエラー】") {
 
 // ページA: バスケット
 function processPageA() {
+    // 1. まずバスケットが空かどうかを判定 (.BasketNoItem クラスの存在)
+    const emptyBasketArea = document.querySelector(".BasketNoItem");
+    if (emptyBasketArea) {
+        return; // 空の場合は安全なので警告を出さない
+    }
+
     const registerBtn = document.querySelector(".Button--NextStepLogin");
     const estimateBtn = document.getElementById("estimate");
 
-    // ボタンの存在確認 (パニックモード判定)
+    // 2. ボタンの存在確認 (パニックモード判定)
     if (!registerBtn) {
         triggerPanicMode(
-            "注文に進むボタン（.Button--NextStepLogin）が見つかりません。\n※カートに何も入っていない場合もこの画面が表示されます。"
+            "注文に進むボタン（.Button--NextStepLogin）が見つかりません。"
         );
         return;
     }
