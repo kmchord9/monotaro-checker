@@ -265,11 +265,11 @@ function processPageC() {
             const mainTable = document.querySelector("div[align='center'] > table");
             if (mainTable) {
                 mainTable.parentNode.insertBefore(printBtn, mainTable);
-                
+
                 // 見積書下部に注釈を追加
                 const footerNote = document.createElement("div");
                 footerNote.id = "ext-quote-footer";
-                footerNote.innerHTML = "※この見積書はモノタロウ・チェッカー拡張機能が有効な端末で内容が確認・出力されました。";
+                footerNote.innerHTML = "※この見積書はモノタロウ事務誤り防止ツール拡張機能が有効な端末で内容が確認・出力されました。";
                 footerNote.style = "margin-top:20px; text-align:right; font-size:10pt; color:#666; border-top:1px solid #ccc; padding-top:10px;";
                 mainTable.parentNode.appendChild(footerNote);
             }
