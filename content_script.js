@@ -263,7 +263,16 @@ function processPageC() {
             printBtn.style = "display:block; margin:10px auto 20px auto; padding:12px 30px; background:#0078d4; color:white; border:none; border-radius:4px; cursor:pointer; font-weight:bold; font-size:18px;";
             printBtn.onclick = () => window.print();
             const mainTable = document.querySelector("div[align='center'] > table");
-            if (mainTable) mainTable.parentNode.insertBefore(printBtn, mainTable);
+            if (mainTable) {
+                mainTable.parentNode.insertBefore(printBtn, mainTable);
+                
+                // 見積書下部に注釈を追加
+                const footerNote = document.createElement("div");
+                footerNote.id = "ext-quote-footer";
+                footerNote.innerHTML = "※この見積書はモノタロウ・チェッカー拡張機能が有効な端末で内容が確認・出力されました。";
+                footerNote.style = "margin-top:20px; text-align:right; font-size:10pt; color:#666; border-top:1px solid #ccc; padding-top:10px;";
+                mainTable.parentNode.appendChild(footerNote);
+            }
         }
     } else {
         if (!document.getElementById("ext-err-quote")) {
