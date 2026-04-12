@@ -147,7 +147,10 @@ function processPageA() {
     btns.forEach(btn => applyRestriction(btn, "システム判定中..."));
 
     const priceElement = document.querySelector(".NextStepPriceValue .Price");
-    if (!priceElement) return;
+    if (!priceElement) {
+        triggerPanicMode("金額表示（.Price）が見つかりません。サイト仕様変更の可能性があります。");
+        return;
+    }
 
     const subtotal = parsePrice(priceElement.textContent);
 
@@ -179,6 +182,10 @@ function processPageB() {
     if (codePart) codePart.style.display = "none";
 
     const payMethods = document.querySelectorAll('.pay_method');
+    if (payMethods.length === 0) {
+        triggerPanicMode("支払方法選択エリア（.pay_method）が見つかりません。サイト仕様変更の可能性があります。");
+        return;
+    }
     let hasBankTransfer = false;
     let bankInput = null;
 
@@ -198,9 +205,13 @@ function processPageB() {
     const subTotalEl = document.getElementById("checkoutNext__rg_sub_total_span");
     const freightEl = document.getElementById("checkoutNext__rg_d_charge");
 
-    if (subTotalEl && freightEl) {
-        const subtotal = parsePrice(subTotalEl.textContent);
-        const freight = parsePrice(freightEl.textContent);
+    if (!subTotalEl || !freightEl) {
+        triggerPanicMode("金額表示要素（小計/配送料）が見つかりません。サイト仕様変更の可能性があります。");
+        return;
+    }
+
+    const subtotal = parsePrice(subTotalEl.textContent);
+    const freight = parsePrice(freightEl.textContent);
 
         if (!hasBankTransfer) {
             btns.forEach(btn => applyRestriction(btn, "【重要】お支払方法を「都度払い」に設定してください。"));
