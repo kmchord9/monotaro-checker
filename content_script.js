@@ -9,8 +9,8 @@ const TAX_RATE = 0.1;
  */
 function checkTaxDecimal(subtotal) {
     const subtotalInt = Math.round(subtotal);
-    const taxRateInt = 10; // 0.1 * 100 / 10
-    const taxAmountX10 = (subtotalInt * taxRateInt) / 10;
+    const taxRatePct = TAX_RATE * 100;
+    const taxAmountX10 = (subtotalInt * taxRatePct) / 10;
     const firstDecimalDigit = Math.floor(taxAmountX10) % 10;
 
     // 0〜4の範囲(切り捨て/四捨五入が一致)ならtrue
